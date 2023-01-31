@@ -5,8 +5,10 @@ import io.lukaspkl.curso.messageria.msclientes.infra.repository.ClienteRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("clientes")
@@ -26,11 +28,9 @@ public class ClientesController {
 
 
     @GetMapping(params = "cpf")
-    public ResponseEntity dadosCliente(@RequestParam("cpf") String cpf){
-        var cliente = clienteService.getByCPF(cpf);
-        if(cliente.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(cliente);
+    public Cliente obterCPF (@RequestParam("cpf") String cpf){
+        return clientebanco
+                .findByCpf(cpf)
+                .orElseThrow(()-> new ResponseStatusException(NOT_FOUND,"Cliente nao encontrado."));
     }
 }
